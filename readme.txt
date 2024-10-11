@@ -1,1 +1,1 @@
-Repositorio de Javier Ruiz Sánchez
+Repositorio de Javier Ruiz Sánchez con los milestones propuestos en Python y Julia para la asignatura Ampliación de Matemáticas I del MUSE.
