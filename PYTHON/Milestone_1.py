@@ -64,7 +64,7 @@ elif esquema == "RK4": #ESQUEMA RUNGE-KUTTA ORDEN 4
 else:
     print("Esquema no válido")
 
-
+plt.axis('equal')
 plt.plot(U[:,0],U[:,1])
 plt.show()
 

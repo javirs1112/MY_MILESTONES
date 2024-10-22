@@ -1,32 +1,7 @@
-from numpy import array, zeros, linspace, concatenate
+from numpy import array, zeros, linspace
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
-
-def Problema_Cauchy(Esquema, F, U, N, dt, t):
-
-    for n in range(N):
-        
-        U[n+1,:] = Esquema(U[n,:], F, dt, n)
-
-    return U
-
-def Kepler(U,t):
-
-    F = concatenate((U[2:4],-U[0:2]/norm(U[0:2])**3), axis = 0)
-
-    return F
-def Euler_Explicito(U, F, dt, t):
-
-    return U + dt*F(U,t)
-
-def RK4(U, F, dt, t):
-
-    k1 = F(U,t)
-    k2 = F(U + dt*k1/2, t + dt/2)
-    k3 = F(U + dt*k2/2, t + dt/2)
-    k4 = F(U + dt*k3, t + dt)
-
-    return U + dt*(k1 + 2*k2 + 2*k3 + k4)/6
+from Functions import Problema_Cauchy, Kepler, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson
 
 #DATOS Y CONDICIONES INICIALES
 
@@ -34,8 +9,8 @@ U0 = array([1, 0, 0, 1])
 
 
 t0 = 0
-tf = 20
-N = 200
+tf = 10
+N = 1000
 dt = (tf-t0)/N
 
 t = linspace(t0,tf,N+1)
@@ -43,8 +18,9 @@ t = linspace(t0,tf,N+1)
 U = zeros([N+1,4])
 U[0,:] = U0
 
-U = Problema_Cauchy(Euler_Explicito, Kepler, U, N, dt, t)
+U = Problema_Cauchy(Euler_Implicito, Kepler, U, N, t)
 
+plt.axis('equal') 
 plt.plot(U[:,0],U[:,1])
 plt.show()
 
