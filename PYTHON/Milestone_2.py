@@ -11,7 +11,6 @@ U0 = array([1, 0, 0, 1])
 t0 = 0
 tf = 10
 N = 1000
-dt = (tf-t0)/N
 
 t = linspace(t0,tf,N+1)
 

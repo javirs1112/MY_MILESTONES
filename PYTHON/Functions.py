@@ -1,14 +1,17 @@
-from numpy import concatenate
+from numpy import concatenate, zeros, linspace
 from numpy.linalg import norm
 from scipy.optimize import newton
 
 
-def Problema_Cauchy(Esquema, F, U, N, t):
+def Problema_Cauchy(Esquema, F, U0, t):
     
+    N = len(t) - 1
+    U = zeros([N+1, len(U0)])
+    U[0,:] = U0
+
     for n in range(N):
 
         dt = t[n+1] - t[n]
-        
         U[n+1,:] = Esquema(U[n,:], F, dt, n)
 
     return U
@@ -46,3 +49,19 @@ def Crank_Nicolson(U, F, dt, t):
         return X - U - dt*(F(X, t)+F(U,t))
     
     return newton(G, U)
+
+def Richardson(U0, F, Problema, Esquema, t, q):  #Este método esta escrito sólo para usarse con dt1 = dt2/2, generalizar en el futuro
+
+    t1 = t
+    t2 = linspace(t[0], t[-1], 2*len(t1))
+
+    Error = zeros([len(t1), len(U0)])           
+
+    U1 = Problema(Esquema, F, U0, t1)
+    U2 = Problema(Esquema, F, U0, t2)
+
+    for i in range(len(t)):
+        Error[i,:] = (U2[2*i,:] - U1[i,:]) / (1 - 1/2**q)
+
+    return Error
+
