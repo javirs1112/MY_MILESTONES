@@ -1,41 +1,57 @@
-from Functions import Problema_Cauchy, Kepler, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson, Richardson
+from Functions import Problema_Cauchy, Kepler, Oscilador, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson, Problem_Error, Convergencia
 from numpy import array, linspace
 import matplotlib.pyplot as plt
+from scipy.stats import linregress
 
 U0 = array([1, 0, 0, 1])
 t0 = 0
-tf = 10
-N = 1000
-t = linspace(t0, tf, 1000)
+tf = 20
+N = 500
+t = linspace(t0, tf, N+1)
 
-input = input("Introduce el esquema numérico deseado(EE, RK4, EI, CN): ")
+input1 = input("Introduce el esquema numérico deseado(EE, RK4, EI, CN): ")
+input2 = input("Introduce qué desea saber(Error, Conver)")
 
-if input == "EE":
+if input1 == "EE":
     esquema = Euler_Explicito
     q = 1
 
-elif input == "RK4":
+elif input1 == "RK4":
     esquema = RK4
     q = 4
 
-elif input == "EI":
+elif input1 == "EI":
     esquema = Euler_Implicito
-    q = 4
-
-elif input == "CN":
-    esquema = Crank_Nicolson
     q = 1
+
+elif input1 == "CN":
+    esquema = Crank_Nicolson
+    q = 2
 else:
     print("Esquema no válido")
 
-Error = Richardson(U0, Kepler, Problema_Cauchy, esquema, t, q)
+if input2 == "Error":
 
-plt.axis('equal') 
-plt.xlabel('tiempo')
-plt.ylabel('Error')
-plt.plot(t, Error[:,0], '-b', label = 'X')
-plt.plot(t, Error[:,1], '-r', label = 'Y')
-plt.plot(t, Error[:,2], '--m', label = 'Vx')
-plt.plot(t, Error[:,3], '--c', label = 'Vy')
-plt.legend()
-plt.show()
+    Error = Problem_Error(U0, Kepler, Problema_Cauchy, esquema, t, q)
+
+    plt.axis('equal') 
+    plt.xlabel('tiempo')
+    plt.ylabel('Error')
+    plt.plot(t, Error[:,0], '-b', label = 'X')
+    plt.plot(t, Error[:,1], '-r', label = 'Y')
+    plt.plot(t, Error[:,2], '--m', label = 'Vx')
+    plt.plot(t, Error[:,3], '--c', label = 'Vy')
+    plt.legend()
+    plt.show()
+
+elif input2 == "Conver":
+
+    logN, logE, conver = Convergencia(U0, Kepler, Problema_Cauchy, esquema, t)
+
+    plt.axis('equal') 
+    plt.xlabel('logN')
+    plt.ylabel('logE')
+    plt.plot(logN, conver.intercept + conver.slope*logN, '-b', label = 'X')
+    plt.show()
+
+    print(conver.slope)
