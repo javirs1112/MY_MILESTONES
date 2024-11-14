@@ -1,7 +1,7 @@
-from numpy import concatenate, zeros, linspace, array, exp, log
+from numpy import concatenate, zeros, linspace, array, exp, log10
 from numpy.linalg import norm
 from scipy.optimize import newton
-from scipy.stats import linregress
+
 
 
 def Problema_Cauchy(Esquema, F, U0, t):
@@ -160,30 +160,31 @@ def Problem_Error_Convergencia(U0, F, Problema, Esquema, t):
 
     return Error
 
-def Convergencia(U0, F, Problema, Esquema, t):
+def Convergencia(U0, F, Error, Problema, Esquema, t):
     '''''''''''
     --INPUTS--
     
         U0: Vector del estado inicial
         F: Función a resolver
+        Error(U0, F, Problema, Esquema, t): Función que devuelve un vector con el error de un esquema en cada paso temporal
         Esquema: Esquema temporal a resolver
         t: partición temporal 
 
     '''''''''''
-    np = 10 #Número de puntos de la regresión 
+    np = 15 #Número de puntos de la regresión 
     logE = zeros(np)
     logN = zeros(np)
     N = len(t-1)
     t1 = t
     for i in range(np):
         
-        E = Problem_Error_Convergencia(U0, F, Problema, Esquema, t1)
-        logE[i] = log(norm(E[-1,:]))
-        logN[i] = log(N)
+        E = Error(U0, F, Problema, Esquema, t1)
+        logE[i] = log10(norm(E[-1,:]))
+        logN[i] = log10(N)
         N = 2*N
-        t1 = linspace(t[0], t[-1], N)    
+        t1 = linspace(t[0], t[-1], N+1)    
 
-    return logN, logE, linregress(logN,logE)
+    return logN, logE
 
 
 def Newton(F, x_0, Fprima = None, tol = 1e-8, maxiter=50):
