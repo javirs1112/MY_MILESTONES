@@ -1,4 +1,4 @@
-from Functions import Problema_Cauchy, Kepler, Oscilador, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson, Problem_Error, Problem_Error_Convergencia, Convergencia
+from Functions import Problema_Cauchy, Kepler, Oscilador, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson, Leap_Frog,  Problem_Error, Problem_Error_Convergencia, Convergencia
 from numpy import array, linspace
 import matplotlib.pyplot as plt
 from scipy.stats import linregress
@@ -6,7 +6,7 @@ from scipy.stats import linregress
 U0 = array([1, 0, 0, 1])
 t0 = 0
 tf = 20
-N = 500
+N = 2000
 t = linspace(t0, tf, N+1)
 
 input1 = input("Introduce el esquema numérico deseado(EE, RK4, EI, CN): ")
@@ -27,6 +27,8 @@ elif input1 == "EI":
 elif input1 == "CN":
     esquema = Crank_Nicolson
     q = 2
+elif input1 == "LP":
+    q
 else:
     print("Esquema no válido")
 

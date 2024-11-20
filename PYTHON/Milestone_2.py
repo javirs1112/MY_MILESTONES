@@ -1,11 +1,12 @@
 from numpy import array, zeros, linspace
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
-from Functions import Problema_Cauchy, Kepler, Oscilador, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson
+from Functions import Problema_Cauchy, Kepler, Oscilador, Euler_Explicito, RK4, Euler_Implicito, Crank_Nicolson, Leap_Frog, Problema_Cauchy_LP
+
 
 #DATOS Y CONDICIONES INICIALES
 
-U0 = array([1, 0])
+U0 = array([1, 0,0,1])
 
 
 t0 = 0
@@ -17,10 +18,10 @@ t = linspace(t0,tf,N+1)
 U = zeros([N+1,len(U0)])
 U[0,:] = U0
 
-U = Problema_Cauchy(Euler_Implicito, Oscilador, U0, t)
+U = Problema_Cauchy(Euler_Explicito, Kepler, U0, t)
 
-plt.axis('equal') 
-plt.plot(t, U[:,0])
+# plt.axis('equal') 
+plt.plot(U[:,0], U[:,1])
 plt.show()
 
 # for n in range(N):
