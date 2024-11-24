@@ -25,13 +25,44 @@ def Problema_Cauchy(Esquema, F, U0, t):
         U[n+1,:] = Esquema(U[n,:], F, t)
 
     return U
+def Problema_Cauchy(Esquema, F, U0, t):
+    '''''''''''
+    --INPUTS--
+
+    Esquema(U, F, t): función que representa el esquema numérico a utilizar
+    F(U,t): función a resolver
+    U0: vector de condiciones iniciales
+    t: partición temporal
+    '''''''''''
+
+
+
+    N = len(t) - 1
+    U = zeros([N+1, len(U0)])
+    U[0,:] = U0
+
+    if Esquema == Leap_Frog:
+
+        U[1,:] = U0 + (t[1]-t[0])*F(U0,t)
+
+        for n in range(1,N):
+            U[n+1,:] = Esquema(U[n-1,:],U[n,:], F, t)
+        return U
+
+    else:
+
+        for n in range(N):
+
+            U[n+1,:] = Esquema(U[n,:], F, t)
+
+        return U
 
 def Kepler(U,t):
     '''''''''''
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
-    t: partición temporal 
+    t: instante temporal 
     '''''''''''
 
 
@@ -129,32 +160,9 @@ def Leap_Frog(U_ant, U, F, t):
     '''''''''''
 
     dt = t[1]-t[0]
-  
 
     return U_ant + 2*dt*F(U,t)
 
-def Problema_Cauchy_LP(Esquema_inic, F, U0, t):
-    '''''''''''
-    --INPUTS--
-
-    Esquema_inic(U, F, t): esquema utilizado para la primera iteración
-    F(U,t): función a resolver
-    U0: vector de condiciones iniciales
-    t: partición temporal
-    '''''''''''
-
-
-
-    N = len(t) - 1
-    U = zeros([N+1, len(U0)])
-    U[0,:] = U0
-    U[1,:]= Esquema_inic(U0,F,t)
-
-    for n in range(1,N):
-
-        U[n+1,:] = Leap_Frog(U[n-1,:], U[n,:], F, t)
-
-    return U
 
 def Problem_Error(U0, F, Problema, Esquema, t, q):  #Este método esta escrito sólo para usarse con dt1 = dt2/2, generalizar en el futuro
     '''''''''''
