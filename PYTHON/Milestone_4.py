@@ -23,7 +23,7 @@ U = Problema_Cauchy(Leap_Frog, Oscilador, U0, t)
 # plt.plot(t, U[:,0])
 # plt.show()
 
-x, y, rho = Region_Estabilidad(RK4, N, -4, 2, -4, 4)
+x, y, rho = Region_Estabilidad(Euler_Explicito, N, -4, 2, -4, 4)
 
 print(shape(rho))
 plt.contour(x, y, rho, linspace(0, 1, 11))
