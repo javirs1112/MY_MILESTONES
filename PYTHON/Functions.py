@@ -1,4 +1,4 @@
-from numpy import concatenate, zeros, linspace, array, exp, log10
+from numpy import concatenate, zeros, linspace, array, exp, log10, abs, float64
 from numpy.linalg import norm
 from scipy.optimize import newton
 
@@ -19,41 +19,21 @@ def Problema_Cauchy(Esquema, F, U0, t):
     N = len(t) - 1
     U = zeros([N+1, len(U0)])
     U[0,:] = U0
-
-    for n in range(N):
-
-        U[n+1,:] = Esquema(U[n,:], F, t)
-
-    return U
-def Problema_Cauchy(Esquema, F, U0, t):
-    '''''''''''
-    --INPUTS--
-
-    Esquema(U, F, t): función que representa el esquema numérico a utilizar
-    F(U,t): función a resolver
-    U0: vector de condiciones iniciales
-    t: partición temporal
-    '''''''''''
-
-
-
-    N = len(t) - 1
-    U = zeros([N+1, len(U0)])
-    U[0,:] = U0
+    dt = t[1]-t[0]
 
     if Esquema == Leap_Frog:
 
         U[1,:] = U0 + (t[1]-t[0])*F(U0,t)
 
         for n in range(1,N):
-            U[n+1,:] = Esquema(U[n-1,:],U[n,:], F, t)
+            U[n+1,:] = Esquema(U[n-1,:],U[n,:], F, t[n], dt)
         return U
 
     else:
 
         for n in range(N):
 
-            U[n+1,:] = Esquema(U[n,:], F, t)
+            U[n+1,:] = Esquema(U[n,:], F, t[n], dt)
 
         return U
 
@@ -75,7 +55,7 @@ def Oscilador(U,t):
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
-    t: partición temporal 
+    t: instante temporal 
     '''''''''''
 
     F = array([ U[1], -U[0]])
@@ -85,29 +65,31 @@ def Oscilador(U,t):
 
 
 
-def Euler_Explicito(U, F, t):
+def Euler_Explicito(U, F, t, dt):
     '''''''''''
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
     F(U,t): función a resolver
-    t: partición temporal 
+    t: instante temporal 
+    dt: delta t
     '''''''''''
 
-    dt = t[1]-t[0]
+    
+    
 
     return U + dt*F(U,t)
 
-def RK4(U, F, t):
+def RK4(U, F, t, dt):
     '''''''''''
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
     F(U,t): función a resolver
-    t: partición temporal 
+    t: instante temporal 
+    dt: delta t 
     '''''''''''
-
-    dt = t[1]-t[0]
+    
 
     k1 = F(U,t)
     k2 = F(U + dt*k1/2, t + dt/2)
@@ -116,16 +98,16 @@ def RK4(U, F, t):
 
     return U + dt*(k1 + 2*k2 + 2*k3 + k4)/6
 
-def Euler_Implicito(U, F, t):
+def Euler_Implicito(U, F, t, dt):
     '''''''''''
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
     F(U,t): función a resolver
-    t: partición temporal 
+    t: instante temporal 
+    dt: delta t 
     '''''''''''
 
-    dt = t[1]-t[0]
 
     def G(X):
 
@@ -133,16 +115,17 @@ def Euler_Implicito(U, F, t):
     
     return newton(G, U, maxiter = 150) #Nota: Escribir Newton hecho por mí.
 
-def Crank_Nicolson(U, F, t):
+def Crank_Nicolson(U, F, t, dt):
     '''''''''''
     --INPUTS--
 
     U: vector de estado (posición, velocidad)
     F(U,t): función a resolver
-    t: partición temporal
+    t: instante temporal 
+    dt: delta t
     '''''''''''
 
-    dt = t[1]-t[0]
+    
 
     def G(X):
 
@@ -150,16 +133,16 @@ def Crank_Nicolson(U, F, t):
     
     return newton(G, U)
 
-def Leap_Frog(U_ant, U, F, t):
+def Leap_Frog(U_ant, U, F, t, dt):
     '''''''''''
     --INPUTS--
-
-    U: vector de estado (posición, velocidad)
+    U_ant: vector de estado en el instante t-1
+    U: vector de estado en el instante t (posición, velocidad)
     F(U,t): función a resolver
-    t: partición temporal 
+    t: instante temporal 
+    dt: delta t 
     '''''''''''
 
-    dt = t[1]-t[0]
 
     return U_ant + 2*dt*F(U,t)
 
@@ -273,6 +256,20 @@ def jorge(x):
 
 def dif_jorge(x):
     return exp(x)-2 
+
+def Region_Estabilidad(Esquema, N, x0, xf, y0, yf):
+
+    x = linspace(x0, xf, N)
+    y = linspace(y0, yf, N)
+    rho = zeros((N,N), dtype=float64)
+
+    for i in range(N):
+        for j in range(N):
+
+            w = complex(x[i], y[j])
+            r = Esquema(1, lambda u, t : u*w, 0, 1)
+            rho[j,i] = abs(r)
+    return x, y, rho
 
 
 
