@@ -269,8 +269,8 @@ def Region_Estabilidad(Esquema, N, x0, xf, y0, yf):
             for j in range(N):
 
                 w = complex(x[i], y[j])
-                r1 = (-2*w + sqrt(4*w**2 + 4))/2 
-                r2 = (-2*w - sqrt(4*w**2 + 4))/2
+                r1 = (2*w + sqrt(4*w**2 + 4))/2 
+                r2 = (2*w - sqrt(4*w**2 + 4))/2
                 # print(r1, r2) 
                 # print(abs(r1), abs(r2))
                 # input("Press enter")
