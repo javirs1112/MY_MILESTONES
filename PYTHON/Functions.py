@@ -1,6 +1,7 @@
 from numpy import concatenate, zeros, linspace, array, exp, log10, abs, float64
 from numpy.linalg import norm
 from scipy.optimize import newton
+from cmath import sqrt
 
 
 
@@ -261,14 +262,29 @@ def Region_Estabilidad(Esquema, N, x0, xf, y0, yf):
 
     x = linspace(x0, xf, N)
     y = linspace(y0, yf, N)
-    rho = zeros((N,N), dtype=float64)
+    rho = zeros((N,N))
 
-    for i in range(N):
-        for j in range(N):
+    if Esquema == Leap_Frog:
+        for i in range(N):
+            for j in range(N):
 
-            w = complex(x[i], y[j])
-            r = Esquema(1, lambda u, t : u*w, 0, 1)
-            rho[j,i] = abs(r)
+                w = complex(x[i], y[j])
+                r1 = (-2*w + sqrt(4*w**2 + 4))/2 
+                r2 = (-2*w - sqrt(4*w**2 + 4))/2
+                # print(r1, r2) 
+                # print(abs(r1), abs(r2))
+                # input("Press enter")
+                rho[j, i] = max(abs(r1), abs(r2))
+
+
+    else:
+
+        for i in range(N):
+            for j in range(N):
+
+                w = complex(x[i], y[j])
+                r = Esquema(1, lambda u, t : u*w, 0, 1)
+                rho[j,i] = abs(r)
     return x, y, rho
 
 
